@@ -1789,20 +1789,6 @@ digraph critical_path {
 
 ---
 
-### 5. Week-by-Week Comparison Framework
-
-**Created:** Longitudinal performance tracking across all 8 weeks.
-
-**Metrics Tracked:**
-
-| Week | Stage | WNS (ns) | Cell Count | Die Area (mm²) | Power (mW) |
-|------|-------|----------|------------|----------------|------------|
-| 2 | RTL Simulation | N/A | N/A | N/A | N/A |
-| 3 | Post-Synth STA | +2.26 | 10,349 | N/A | N/A |
-| 5 | Post-Place | +1.84 | 10,347 | 2.19 | N/A |
-| 7 | Post-Route | +0.82 | 10,349 | 2.19 | 4.03 |
-| 8 | Multi-Corner | +5.81 (best)<br>-4.90 (worst) | 10,349 | 2.19 | 4.03 |
-
 **Key Insights:**
 - Timing degradation pattern: Synth → Place (-0.42 ns) → Route (-1.02 ns)
 - Cell count stability: <0.02% variation across stages
