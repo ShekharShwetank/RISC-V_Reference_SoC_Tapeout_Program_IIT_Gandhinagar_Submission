@@ -25,6 +25,483 @@
 6. [Conclusion](#conclusion)
 7. [References and Acknowledgments](#references-and-acknowledgments)
 
+## Directory Structure
+
+```bash
+ank@shwetank-shekhar:~/Desktop/SoC_Shwetank/Documents/IIT$ tree
+.
+├── assets
+│   ├── chip_stats.png
+│   ├── Clock_tree_vsdbabysoc.png
+│   ├── COMPLETE_ORFS_SUCCESFUL_vsdbabysoc.png
+│   ├── complete_orfs_vsdbabysoc.png
+│   ├── comp_pre_vs_post_synth_sim_2.png
+│   ├── comp_pre_vs_post_synth_sim.png
+│   ├── congestion_resolved_fully.png
+│   ├── critical_path_improved.png
+│   ├── critical_path.png
+│   ├── critical_path_with_lib_delays.png
+│   ├── cts_vsdbabysoc.png
+│   ├── docker_TAG.png
+│   ├── extracted_timing_across_all_corners.png
+│   ├── Floorplan_main.png
+│   ├── floorplan_vsdbabysoc.png
+│   ├── Floorplan_zoom.png
+│   ├── Installation_Summary.png
+│   ├── KLayout_spm.gds_1.png
+│   ├── make_final_base_summary.png
+│   ├── OpenROAD_6_final-gcd.png
+│   ├── OpenROAD_verification_succesful_run.png
+│   ├── OpenROAD_version.png
+│   ├── PCTS.png
+│   ├── placement_vsdbaysoc.png
+│   ├── PP.png
+│   ├── PR.png
+│   ├── PS.png
+│   ├── PVT_SUMMARY_ACROSS_ALL_CORNERS.png
+│   ├── pvt_summary.png
+│   ├── PVT_SUM_VERIFY.png
+│   ├── pvt_tns.png
+│   ├── pvt_wns.png
+│   ├── pvt_worst_hold.png
+│   ├── pvt_worst_setup.png
+│   ├── reports.png
+│   ├── results.png
+│   ├── routed_vsdbabysoc.png
+│   ├── spm.gds_full.png
+│   ├── spm.gds_zoom.png
+│   ├── successful_OpenROAD_installation.png
+│   ├── vsdbabysoc.yosys_show.png
+│   ├── waveform_post_synth_sim.png
+│   ├── waveform_pre_synth_sim_2.png
+│   ├── waveform_pre_synth_sim.png
+│   └── Yosys_version.png
+├── flow
+│   ├── debug_pdn.tcl
+│   ├── designs
+│   │   └── sky130hd
+│   │       └── VSDBabySoC
+│   │           ├── check_power.tcl
+│   │           ├── config.mk
+│   │           ├── gds
+│   │           │   ├── avsddac.gds
+│   │           │   └── avsdpll.gds
+│   │           ├── gls_model
+│   │           │   ├── primitives.v
+│   │           │   └── sky130_fd_sc_hd.v
+│   │           ├── include
+│   │           │   ├── sandpiper_gen.vh
+│   │           │   ├── sandpiper.vh
+│   │           │   ├── sp_default.vh
+│   │           │   └── sp_verilog.vh
+│   │           ├── layout_conf
+│   │           │   ├── rvmyth
+│   │           │   │   ├── config.tcl
+│   │           │   │   └── pin_order.cfg
+│   │           │   └── vsdbabysoc
+│   │           │       ├── config.tcl
+│   │           │       ├── macro.cfg
+│   │           │       └── pin_order.cfg
+│   │           ├── lef
+│   │           │   ├── avsddac.lef
+│   │           │   └── avsdpll.lef
+│   │           ├── lib
+│   │           │   ├── avsddac.lib
+│   │           │   ├── avsdpll.lib
+│   │           │   ├── sed_outputs
+│   │           │   └── sky130_fd_sc_hd__tt_025C_1v80.lib
+│   │           ├── list_macros.out
+│   │           ├── list_macros.tcl
+│   │           ├── macro.cfg
+│   │           ├── pdn_custom.tcl
+│   │           ├── pin_order.cfg
+│   │           ├── run_log.md
+│   │           ├── run_sta_all_corners.tcl
+│   │           ├── script
+│   │           │   ├── sta.conf
+│   │           │   ├── verilog_to_lib.pl
+│   │           │   └── yosys.ys
+│   │           ├── sdc
+│   │           │   ├── vsdbabysoc_layout.sdc
+│   │           │   └── vsdbabysoc_synthesis.sdc
+│   │           ├── src
+│   │           │   └── module
+│   │           │       ├── avsddac.v
+│   │           │       ├── avsdpll.v
+│   │           │       ├── clk_gate.v
+│   │           │       ├── pseudo_rand_gen.sv
+│   │           │       ├── pseudo_rand.sv
+│   │           │       ├── rvmyth_gen.v
+│   │           │       ├── rvmyth.tlv
+│   │           │       ├── rvmyth.v
+│   │           │       ├── testbench.rvmyth.post-routing.v
+│   │           │       ├── testbench.v
+│   │           │       └── vsdbabysoc.v
+│   │           ├── vsdbabysoc_layout.sdc
+│   │           └── vsdbabysoc_synthesis.sdc
+│   ├── extract_timing_metrics.py
+│   ├── generate_heatmap_table.py
+│   ├── logs
+│   │   ├── sky130hd
+│   │   │   └── VSDBabySoC
+│   │   │       └── base
+│   │   │           ├── 1_1_yosys_canonicalize.log
+│   │   │           ├── 1_2_yosys.log
+│   │   │           ├── 2_1_floorplan.json
+│   │   │           ├── 2_1_floorplan.log
+│   │   │           ├── 2_2_floorplan_macro.json
+│   │   │           ├── 2_2_floorplan_macro.log
+│   │   │           ├── 2_3_floorplan_tapcell.json
+│   │   │           ├── 2_3_floorplan_tapcell.log
+│   │   │           ├── 2_4_floorplan_pdn.json
+│   │   │           ├── 2_4_floorplan_pdn.log
+│   │   │           ├── 3_1_place_gp_skip_io.json
+│   │   │           ├── 3_1_place_gp_skip_io.log
+│   │   │           ├── 3_2_place_iop.json
+│   │   │           ├── 3_2_place_iop.log
+│   │   │           ├── 3_3_place_gp.json
+│   │   │           ├── 3_3_place_gp.log
+│   │   │           ├── 3_4_place_resized.json
+│   │   │           ├── 3_4_place_resized.log
+│   │   │           ├── 3_5_place_dp.json
+│   │   │           ├── 3_5_place_dp.log
+│   │   │           ├── 4_1_cts.json
+│   │   │           ├── 4_1_cts.log
+│   │   │           ├── 5_1_grt.json
+│   │   │           ├── 5_1_grt.log
+│   │   │           ├── 5_2_route.json
+│   │   │           ├── 5_2_route.log
+│   │   │           ├── 5_3_fillcell.json
+│   │   │           ├── 5_3_fillcell.log
+│   │   │           ├── 6_1_fill.json
+│   │   │           ├── 6_1_fill.log
+│   │   │           ├── 6_1_merge.log
+│   │   │           ├── 6_report.json
+│   │   │           └── 6_report.log
+│   │   ├── sta_all_corners.log
+│   │   └── sta_corners
+│   │       ├── postcts_ff_100C_1v65.log
+│   │       ├── postcts_ff_100C_1v95.log
+│   │       ├── postcts_ff_n40C_1v56.log
+│   │       ├── postcts_ff_n40C_1v65.log
+│   │       ├── postcts_ff_n40C_1v76.log
+│   │       ├── postcts_ff_n40C_1v95.log
+│   │       ├── postcts_ss_100C_1v40.log
+│   │       ├── postcts_ss_100C_1v60.log
+│   │       ├── postcts_ss_n40C_1v28.log
+│   │       ├── postcts_ss_n40C_1v35.log
+│   │       ├── postcts_ss_n40C_1v40.log
+│   │       ├── postcts_ss_n40C_1v44.log
+│   │       ├── postcts_ss_n40C_1v60.log
+│   │       ├── postcts_ss_n40C_1v76.log
+│   │       ├── postcts_tt_025C_1v80.log
+│   │       ├── postcts_tt_100C_1v80.log
+│   │       ├── postplace_ff_100C_1v65.log
+│   │       ├── postplace_ff_100C_1v95.log
+│   │       ├── postplace_ff_n40C_1v56.log
+│   │       ├── postplace_ff_n40C_1v65.log
+│   │       ├── postplace_ff_n40C_1v76.log
+│   │       ├── postplace_ff_n40C_1v95.log
+│   │       ├── postplace_ss_100C_1v40.log
+│   │       ├── postplace_ss_100C_1v60.log
+│   │       ├── postplace_ss_n40C_1v28.log
+│   │       ├── postplace_ss_n40C_1v35.log
+│   │       ├── postplace_ss_n40C_1v40.log
+│   │       ├── postplace_ss_n40C_1v44.log
+│   │       ├── postplace_ss_n40C_1v60.log
+│   │       ├── postplace_ss_n40C_1v76.log
+│   │       ├── postplace_tt_025C_1v80.log
+│   │       ├── postplace_tt_100C_1v80.log
+│   │       ├── postroute_ff_100C_1v65.log
+│   │       ├── postroute_ff_100C_1v95.log
+│   │       ├── postroute_ff_n40C_1v56.log
+│   │       ├── postroute_ff_n40C_1v65.log
+│   │       ├── postroute_ff_n40C_1v76.log
+│   │       ├── postroute_ff_n40C_1v95.log
+│   │       ├── postroute_ss_100C_1v40.log
+│   │       ├── postroute_ss_100C_1v60.log
+│   │       ├── postroute_ss_n40C_1v28.log
+│   │       ├── postroute_ss_n40C_1v35.log
+│   │       ├── postroute_ss_n40C_1v40.log
+│   │       ├── postroute_ss_n40C_1v44.log
+│   │       ├── postroute_ss_n40C_1v60.log
+│   │       ├── postroute_ss_n40C_1v76.log
+│   │       ├── postroute_tt_025C_1v80.log
+│   │       ├── postroute_tt_100C_1v80.log
+│   │       ├── postsynth_ff_100C_1v65.log
+│   │       ├── postsynth_ff_100C_1v95.log
+│   │       ├── postsynth_ff_n40C_1v56.log
+│   │       ├── postsynth_ff_n40C_1v65.log
+│   │       ├── postsynth_ff_n40C_1v76.log
+│   │       ├── postsynth_ff_n40C_1v95.log
+│   │       ├── postsynth_ss_100C_1v40.log
+│   │       ├── postsynth_ss_100C_1v60.log
+│   │       ├── postsynth_ss_n40C_1v28.log
+│   │       ├── postsynth_ss_n40C_1v35.log
+│   │       ├── postsynth_ss_n40C_1v40.log
+│   │       ├── postsynth_ss_n40C_1v44.log
+│   │       ├── postsynth_ss_n40C_1v60.log
+│   │       ├── postsynth_ss_n40C_1v76.log
+│   │       ├── postsynth_tt_025C_1v80.log
+│   │       └── postsynth_tt_100C_1v80.log
+│   ├── plot_timing_graphs.py
+│   ├── reports
+│   │   ├── sky130hd
+│   │   │   └── VSDBabySoC
+│   │   │       └── base
+│   │   │           ├── 2_floorplan_final.rpt
+│   │   │           ├── 3_detailed_place.rpt
+│   │   │           ├── 3_global_place.rpt
+│   │   │           ├── 3_resizer.rpt
+│   │   │           ├── 4_cts_final.rpt
+│   │   │           ├── 5_detailed_route.rpt
+│   │   │           ├── 5_global_route.rpt
+│   │   │           ├── 5_route_drc.rpt
+│   │   │           ├── 5_route_drc.rpt-10.rpt
+│   │   │           ├── 5_route_drc.rpt-15.rpt
+│   │   │           ├── 5_route_drc.rpt-20.rpt
+│   │   │           ├── 5_route_drc.rpt-25.rpt
+│   │   │           ├── 5_route_drc.rpt-30.rpt
+│   │   │           ├── 5_route_drc.rpt-35.rpt
+│   │   │           ├── 5_route_drc.rpt-40.rpt
+│   │   │           ├── 5_route_drc.rpt-45.rpt
+│   │   │           ├── 5_route_drc.rpt-50.rpt
+│   │   │           ├── 5_route_drc.rpt-55.rpt
+│   │   │           ├── 5_route_drc.rpt-5.rpt
+│   │   │           ├── 5_route_drc.rpt-60.rpt
+│   │   │           ├── drt_antennas.log
+│   │   │           ├── grt_antennas.log
+│   │   │           ├── synth_check.txt
+│   │   │           ├── synth_stat.txt
+│   │   │           └── VDD.rpt
+│   │   └── sta_across_pvt
+│   │       ├── graphs
+│   │       │   ├── heatmap_table_postcts.png
+│   │       │   ├── heatmap_table_postplace.png
+│   │       │   ├── heatmap_table_postroute.png
+│   │       │   ├── heatmap_table_postsynth.png
+│   │       │   ├── hold_slack_heatmap.png
+│   │       │   ├── setup_slack_comparison.png
+│   │       │   ├── setup_slack_heatmap.png
+│   │       │   ├── ths_comparison.png
+│   │       │   ├── tns_comparison.png
+│   │       │   ├── tns_heatmap.png
+│   │       │   ├── violations_by_corner_type.png
+│   │       │   ├── whs_comparison.png
+│   │       │   └── wns_comparison.png
+│   │       ├── postcts_ff_100C_1v65_hold.rpt
+│   │       ├── postcts_ff_100C_1v65_setup.rpt
+│   │       ├── postcts_ff_100C_1v65_summary.txt
+│   │       ├── postcts_ff_100C_1v95_hold.rpt
+│   │       ├── postcts_ff_100C_1v95_setup.rpt
+│   │       ├── postcts_ff_100C_1v95_summary.txt
+│   │       ├── postcts_ff_n40C_1v56_hold.rpt
+│   │       ├── postcts_ff_n40C_1v56_setup.rpt
+│   │       ├── postcts_ff_n40C_1v56_summary.txt
+│   │       ├── postcts_ff_n40C_1v65_hold.rpt
+│   │       ├── postcts_ff_n40C_1v65_setup.rpt
+│   │       ├── postcts_ff_n40C_1v65_summary.txt
+│   │       ├── postcts_ff_n40C_1v76_hold.rpt
+│   │       ├── postcts_ff_n40C_1v76_setup.rpt
+│   │       ├── postcts_ff_n40C_1v76_summary.txt
+│   │       ├── postcts_ff_n40C_1v95_hold.rpt
+│   │       ├── postcts_ff_n40C_1v95_setup.rpt
+│   │       ├── postcts_ff_n40C_1v95_summary.txt
+│   │       ├── postcts_ss_100C_1v40_hold.rpt
+│   │       ├── postcts_ss_100C_1v40_setup.rpt
+│   │       ├── postcts_ss_100C_1v40_summary.txt
+│   │       ├── postcts_ss_100C_1v60_hold.rpt
+│   │       ├── postcts_ss_100C_1v60_setup.rpt
+│   │       ├── postcts_ss_100C_1v60_summary.txt
+│   │       ├── postcts_ss_n40C_1v28_hold.rpt
+│   │       ├── postcts_ss_n40C_1v28_setup.rpt
+│   │       ├── postcts_ss_n40C_1v28_summary.txt
+│   │       ├── postcts_ss_n40C_1v35_hold.rpt
+│   │       ├── postcts_ss_n40C_1v35_setup.rpt
+│   │       ├── postcts_ss_n40C_1v35_summary.txt
+│   │       ├── postcts_ss_n40C_1v40_hold.rpt
+│   │       ├── postcts_ss_n40C_1v40_setup.rpt
+│   │       ├── postcts_ss_n40C_1v40_summary.txt
+│   │       ├── postcts_ss_n40C_1v44_hold.rpt
+│   │       ├── postcts_ss_n40C_1v44_setup.rpt
+│   │       ├── postcts_ss_n40C_1v44_summary.txt
+│   │       ├── postcts_ss_n40C_1v60_hold.rpt
+│   │       ├── postcts_ss_n40C_1v60_setup.rpt
+│   │       ├── postcts_ss_n40C_1v60_summary.txt
+│   │       ├── postcts_ss_n40C_1v76_hold.rpt
+│   │       ├── postcts_ss_n40C_1v76_setup.rpt
+│   │       ├── postcts_ss_n40C_1v76_summary.txt
+│   │       ├── postcts_tt_025C_1v80_hold.rpt
+│   │       ├── postcts_tt_025C_1v80_setup.rpt
+│   │       ├── postcts_tt_025C_1v80_summary.txt
+│   │       ├── postcts_tt_100C_1v80_hold.rpt
+│   │       ├── postcts_tt_100C_1v80_setup.rpt
+│   │       ├── postcts_tt_100C_1v80_summary.txt
+│   │       ├── postplace_ff_100C_1v65_hold.rpt
+│   │       ├── postplace_ff_100C_1v65_setup.rpt
+│   │       ├── postplace_ff_100C_1v65_summary.txt
+│   │       ├── postplace_ff_100C_1v95_hold.rpt
+│   │       ├── postplace_ff_100C_1v95_setup.rpt
+│   │       ├── postplace_ff_100C_1v95_summary.txt
+│   │       ├── postplace_ff_n40C_1v56_hold.rpt
+│   │       ├── postplace_ff_n40C_1v56_setup.rpt
+│   │       ├── postplace_ff_n40C_1v56_summary.txt
+│   │       ├── postplace_ff_n40C_1v65_hold.rpt
+│   │       ├── postplace_ff_n40C_1v65_setup.rpt
+│   │       ├── postplace_ff_n40C_1v65_summary.txt
+│   │       ├── postplace_ff_n40C_1v76_hold.rpt
+│   │       ├── postplace_ff_n40C_1v76_setup.rpt
+│   │       ├── postplace_ff_n40C_1v76_summary.txt
+│   │       ├── postplace_ff_n40C_1v95_hold.rpt
+│   │       ├── postplace_ff_n40C_1v95_setup.rpt
+│   │       ├── postplace_ff_n40C_1v95_summary.txt
+│   │       ├── postplace_ss_100C_1v40_hold.rpt
+│   │       ├── postplace_ss_100C_1v40_setup.rpt
+│   │       ├── postplace_ss_100C_1v40_summary.txt
+│   │       ├── postplace_ss_100C_1v60_hold.rpt
+│   │       ├── postplace_ss_100C_1v60_setup.rpt
+│   │       ├── postplace_ss_100C_1v60_summary.txt
+│   │       ├── postplace_ss_n40C_1v28_hold.rpt
+│   │       ├── postplace_ss_n40C_1v28_setup.rpt
+│   │       ├── postplace_ss_n40C_1v28_summary.txt
+│   │       ├── postplace_ss_n40C_1v35_hold.rpt
+│   │       ├── postplace_ss_n40C_1v35_setup.rpt
+│   │       ├── postplace_ss_n40C_1v35_summary.txt
+│   │       ├── postplace_ss_n40C_1v40_hold.rpt
+│   │       ├── postplace_ss_n40C_1v40_setup.rpt
+│   │       ├── postplace_ss_n40C_1v40_summary.txt
+│   │       ├── postplace_ss_n40C_1v44_hold.rpt
+│   │       ├── postplace_ss_n40C_1v44_setup.rpt
+│   │       ├── postplace_ss_n40C_1v44_summary.txt
+│   │       ├── postplace_ss_n40C_1v60_hold.rpt
+│   │       ├── postplace_ss_n40C_1v60_setup.rpt
+│   │       ├── postplace_ss_n40C_1v60_summary.txt
+│   │       ├── postplace_ss_n40C_1v76_hold.rpt
+│   │       ├── postplace_ss_n40C_1v76_setup.rpt
+│   │       ├── postplace_ss_n40C_1v76_summary.txt
+│   │       ├── postplace_tt_025C_1v80_hold.rpt
+│   │       ├── postplace_tt_025C_1v80_setup.rpt
+│   │       ├── postplace_tt_025C_1v80_summary.txt
+│   │       ├── postplace_tt_100C_1v80_hold.rpt
+│   │       ├── postplace_tt_100C_1v80_setup.rpt
+│   │       ├── postplace_tt_100C_1v80_summary.txt
+│   │       ├── postroute_ff_100C_1v65_hold.rpt
+│   │       ├── postroute_ff_100C_1v65_setup.rpt
+│   │       ├── postroute_ff_100C_1v65_summary.txt
+│   │       ├── postroute_ff_100C_1v95_hold.rpt
+│   │       ├── postroute_ff_100C_1v95_setup.rpt
+│   │       ├── postroute_ff_100C_1v95_summary.txt
+│   │       ├── postroute_ff_n40C_1v56_hold.rpt
+│   │       ├── postroute_ff_n40C_1v56_setup.rpt
+│   │       ├── postroute_ff_n40C_1v56_summary.txt
+│   │       ├── postroute_ff_n40C_1v65_hold.rpt
+│   │       ├── postroute_ff_n40C_1v65_setup.rpt
+│   │       ├── postroute_ff_n40C_1v65_summary.txt
+│   │       ├── postroute_ff_n40C_1v76_hold.rpt
+│   │       ├── postroute_ff_n40C_1v76_setup.rpt
+│   │       ├── postroute_ff_n40C_1v76_summary.txt
+│   │       ├── postroute_ff_n40C_1v95_hold.rpt
+│   │       ├── postroute_ff_n40C_1v95_setup.rpt
+│   │       ├── postroute_ff_n40C_1v95_summary.txt
+│   │       ├── postroute_ss_100C_1v40_hold.rpt
+│   │       ├── postroute_ss_100C_1v40_setup.rpt
+│   │       ├── postroute_ss_100C_1v40_summary.txt
+│   │       ├── postroute_ss_100C_1v60_hold.rpt
+│   │       ├── postroute_ss_100C_1v60_setup.rpt
+│   │       ├── postroute_ss_100C_1v60_summary.txt
+│   │       ├── postroute_ss_n40C_1v28_hold.rpt
+│   │       ├── postroute_ss_n40C_1v28_setup.rpt
+│   │       ├── postroute_ss_n40C_1v28_summary.txt
+│   │       ├── postroute_ss_n40C_1v35_hold.rpt
+│   │       ├── postroute_ss_n40C_1v35_setup.rpt
+│   │       ├── postroute_ss_n40C_1v35_summary.txt
+│   │       ├── postroute_ss_n40C_1v40_hold.rpt
+│   │       ├── postroute_ss_n40C_1v40_setup.rpt
+│   │       ├── postroute_ss_n40C_1v40_summary.txt
+│   │       ├── postroute_ss_n40C_1v44_hold.rpt
+│   │       ├── postroute_ss_n40C_1v44_setup.rpt
+│   │       ├── postroute_ss_n40C_1v44_summary.txt
+│   │       ├── postroute_ss_n40C_1v60_hold.rpt
+│   │       ├── postroute_ss_n40C_1v60_setup.rpt
+│   │       ├── postroute_ss_n40C_1v60_summary.txt
+│   │       ├── postroute_ss_n40C_1v76_hold.rpt
+│   │       ├── postroute_ss_n40C_1v76_setup.rpt
+│   │       ├── postroute_ss_n40C_1v76_summary.txt
+│   │       ├── postroute_tt_025C_1v80_hold.rpt
+│   │       ├── postroute_tt_025C_1v80_setup.rpt
+│   │       ├── postroute_tt_025C_1v80_summary.txt
+│   │       ├── postroute_tt_100C_1v80_hold.rpt
+│   │       ├── postroute_tt_100C_1v80_setup.rpt
+│   │       ├── postroute_tt_100C_1v80_summary.txt
+│   │       ├── postsynth_ff_100C_1v65_hold.rpt
+│   │       ├── postsynth_ff_100C_1v65_setup.rpt
+│   │       ├── postsynth_ff_100C_1v65_summary.txt
+│   │       ├── postsynth_ff_100C_1v95_hold.rpt
+│   │       ├── postsynth_ff_100C_1v95_setup.rpt
+│   │       ├── postsynth_ff_100C_1v95_summary.txt
+│   │       ├── postsynth_ff_n40C_1v56_hold.rpt
+│   │       ├── postsynth_ff_n40C_1v56_setup.rpt
+│   │       ├── postsynth_ff_n40C_1v56_summary.txt
+│   │       ├── postsynth_ff_n40C_1v65_hold.rpt
+│   │       ├── postsynth_ff_n40C_1v65_setup.rpt
+│   │       ├── postsynth_ff_n40C_1v65_summary.txt
+│   │       ├── postsynth_ff_n40C_1v76_hold.rpt
+│   │       ├── postsynth_ff_n40C_1v76_setup.rpt
+│   │       ├── postsynth_ff_n40C_1v76_summary.txt
+│   │       ├── postsynth_ff_n40C_1v95_hold.rpt
+│   │       ├── postsynth_ff_n40C_1v95_setup.rpt
+│   │       ├── postsynth_ff_n40C_1v95_summary.txt
+│   │       ├── postsynth_ss_100C_1v40_hold.rpt
+│   │       ├── postsynth_ss_100C_1v40_setup.rpt
+│   │       ├── postsynth_ss_100C_1v40_summary.txt
+│   │       ├── postsynth_ss_100C_1v60_hold.rpt
+│   │       ├── postsynth_ss_100C_1v60_setup.rpt
+│   │       ├── postsynth_ss_100C_1v60_summary.txt
+│   │       ├── postsynth_ss_n40C_1v28_hold.rpt
+│   │       ├── postsynth_ss_n40C_1v28_setup.rpt
+│   │       ├── postsynth_ss_n40C_1v28_summary.txt
+│   │       ├── postsynth_ss_n40C_1v35_hold.rpt
+│   │       ├── postsynth_ss_n40C_1v35_setup.rpt
+│   │       ├── postsynth_ss_n40C_1v35_summary.txt
+│   │       ├── postsynth_ss_n40C_1v40_hold.rpt
+│   │       ├── postsynth_ss_n40C_1v40_setup.rpt
+│   │       ├── postsynth_ss_n40C_1v40_summary.txt
+│   │       ├── postsynth_ss_n40C_1v44_hold.rpt
+│   │       ├── postsynth_ss_n40C_1v44_setup.rpt
+│   │       ├── postsynth_ss_n40C_1v44_summary.txt
+│   │       ├── postsynth_ss_n40C_1v60_hold.rpt
+│   │       ├── postsynth_ss_n40C_1v60_setup.rpt
+│   │       ├── postsynth_ss_n40C_1v60_summary.txt
+│   │       ├── postsynth_ss_n40C_1v76_hold.rpt
+│   │       ├── postsynth_ss_n40C_1v76_setup.rpt
+│   │       ├── postsynth_ss_n40C_1v76_summary.txt
+│   │       ├── postsynth_tt_025C_1v80_hold.rpt
+│   │       ├── postsynth_tt_025C_1v80_setup.rpt
+│   │       ├── postsynth_tt_025C_1v80_summary.txt
+│   │       ├── postsynth_tt_100C_1v80_hold.rpt
+│   │       ├── postsynth_tt_100C_1v80_setup.rpt
+│   │       ├── postsynth_tt_100C_1v80_summary.txt
+│   │       ├── timing_metrics_all.csv
+│   │       ├── timing_metrics_all.json
+│   │       ├── timing_table_postcts.csv
+│   │       ├── timing_table_postplace.csv
+│   │       ├── timing_table_postroute.csv
+│   │       ├── timing_table_postsynth.csv
+│   │       ├── week3_baseline.json
+│   │       └── week3_vs_week8_comparison.csv
+│   ├── results
+│   │   └── sky130hd
+│   │       └── VSDBabySoC
+│   │           └── base
+│   │               ├── 6_final.spef
+│   │               └── vsdbabysoc.spef
+│   └── run_multi_corner_sta.sh
+└── README.md
+
+33 directories, 540 files
+ank@shwetank-shekhar:~/Desktop/SoC_Shwetank/Documents/IIT$ 
+```
+
 ## Program Overview
 
 This repository documents the complete journey of **VSDBabySoC** design implementation - from RTL specification to post-layout signoff - as part of the **RISC-V Reference SoC Tapeout Program** in collaboration with **IIT Gandhinagar**. The work spans 9 weeks of intensive hands-on learning in digital VLSI design using industry-standard open-source EDA tools.
@@ -39,8 +516,6 @@ This repository documents the complete journey of **VSDBabySoC** design implemen
 | **Clock Frequency** | Target: 91 MHz (11 ns period) |
 | **Analog IP** | avsdpll (PLL), avsddac (10-bit DAC) |
 | **Standard Cells** | sky130_fd_sc_hd library |
-| **Final Die Area** | ~1.45mm × 1.45mm |
-| **Total Cells** | 10,349 standard cells |
 | **EDA Tools** | OpenROAD, Yosys, OpenSTA, Magic, ngspice |
 
 ### Development Environment
@@ -94,25 +569,91 @@ VSDBabySoC is a small but complete mixed-signal System-on-Chip demonstrating int
 
 ### Component Descriptions
 
-**1. RISC-V Core (rvmyth)**
-- 32-bit RISC-V processor implementing RV32I base instruction set
-- Designed using TL-Verilog (Transaction-Level Verilog)
-- Generated using Sandpiper-SaaS transpiler
-- Features: Single-cycle implementation, 32 registers, ALU operations
-- Produces 10-bit digital output values
+#### 1. RISC-V Core (rvmyth)
 
-**2. Phase-Locked Loop (avsdpll)**
-- Analog IP block for clock generation
-- Takes reference clock and generates stable system clock
-- Critical for synchronizing digital operations
-- Input: REF (reference clock), control signals (ENb_CP, ENb_VCO)
-- Output: CLK (stable generated clock for rvmyth core)
+**What it is:** A 32-bit RISC-V processor implementing the RV32I base instruction set
 
-**3. Digital-to-Analog Converter (avsddac)**
-- 10-bit DAC for converting digital signals to analog
-- Takes 10-bit output from RISC-V core
-- Produces analog voltage output
-- Enables interfacing with analog world
+**Why we use it:**
+- Open ISA with no licensing fees
+- Simple architecture suitable for learning
+- Industry-standard instruction set
+- TL-Verilog enables rapid development
+
+**Key Features:**
+- Single-cycle implementation
+- 32 general-purpose registers (x0-x31)
+- ALU supporting arithmetic, logical, and comparison operations
+- Branch and jump instructions for control flow
+- Load/store architecture for memory access
+
+**Design Method:**
+- Written in TL-Verilog (Transaction-Level Verilog)
+- Transpiled to standard Verilog using Sandpiper-SaaS
+- Produces 10-bit digital output sent to DAC
+
+**Technical Specifications:**
+- Data width: 32 bits
+- Address width: 32 bits (4GB address space)
+- Pipeline stages: 1 (single-cycle)
+- Maximum frequency: ~100 MHz (limited by critical path through ALU)
+
+![rvmyth](assets/18.png)
+![rvmyth_block](assets/37.png)
+
+#### 2. Phase-Locked Loop (avsdpll)
+
+**What it is:** An analog IP block that generates a stable system clock from a reference clock
+
+**Why we need it:**
+- Real chips require stable, jitter-free clocks
+- Demonstrates mixed-signal integration
+- Provides realistic timing challenges
+- Commonly used in all modern SoCs
+
+**How it works:**
+1. Takes external reference clock (REF) as input
+2. Uses phase detector to compare REF with internal VCO output
+3. Charge pump adjusts VCO frequency based on phase difference
+4. Loop filter smooths control voltage
+5. Generates stable CLK output at desired frequency
+
+**Control Signals:**
+- `REF`: Reference clock input
+- `ENb_CP`: Charge pump enable (active low)
+- `ENb_VCO`: VCO enable (active low)
+- `CLK`: Generated system clock output
+
+**Why it's a "black box" in our flow:**
+- Analog circuitry cannot be synthesized like digital logic
+- We use pre-characterized timing models (.lib files)
+- Physical layout is pre-designed (GDS file)
+- We only need to place it and connect signals
+
+![avsdpll](assets/36.png)
+
+#### 3. Digital-to-Analog Converter (avsddac)
+
+**What it is:** A 10-bit DAC that converts digital signals from the RISC-V core into analog voltage
+
+**Why we need it:**
+- Enables interfacing with the analog world
+- Demonstrates practical SoC functionality
+- Common in real systems (audio, sensors, control systems)
+- Adds mixed-signal complexity to the design
+
+**Functionality:**
+- Input: 10-bit digital value from RISC-V core (0-1023)
+- Output: Analog voltage (0V to VDD range)
+- Resolution: VDD/1024 per LSB
+- Example: If VDD=1.8V, 1 LSB = 1.76 mV
+
+**Integration Challenges:**
+- Digital-to-analog boundary requires careful timing analysis
+- Pin placement affects routing complexity
+- Power supply noise can affect DAC accuracy
+- Proper decoupling capacitors needed (not shown in digital flow)
+
+![avsddac](assets/38.png)
 
 ### Design Hierarchy
 
@@ -361,17 +902,111 @@ stat
 #### Synthesis Statistics
 
 ```
-Number of cells:               10,349
-  sky130_fd_sc_hd__a* (AND/OR gates): 3,245
-  sky130_fd_sc_hd__buf*:              856
-  sky130_fd_sc_hd__dfxtp*:            1,613
-  sky130_fd_sc_hd__inv*:              421
-  sky130_fd_sc_hd__mux*:              1,234
-  sky130_fd_sc_hd__nand*:             1,876
-  sky130_fd_sc_hd__nor*:              954
-  sky130_fd_sc_hd__o* (OR-AND gates): 150
+20. Printing statistics.
 
-Chip area for module '\vsdbabysoc': 151667.417600
+=== vsdbabysoc ===
+
+        +----------Local Count, excluding submodules.
+        |        +-Local Area, excluding submodules.
+        |        | 
+     6715        - wires
+     6715        - wire bits
+     1285        - public wires
+     1285        - public wire bits
+        7        - ports
+        7        - port bits
+     6605 5.29E+04 cells
+        1        -   avsddac
+        1        -   avsdpll
+        1   11.261   sky130_fd_sc_hd__a2111o_1
+        6    52.55   sky130_fd_sc_hd__a2111oi_0
+        8   70.067   sky130_fd_sc_hd__a211o_1
+       26  195.187   sky130_fd_sc_hd__a211oi_1
+       17  127.622   sky130_fd_sc_hd__a21boi_0
+       31  232.723   sky130_fd_sc_hd__a21o_1
+      884 4.42E+03   sky130_fd_sc_hd__a21oi_1
+        7   61.309   sky130_fd_sc_hd__a21oi_2
+       15  150.144   sky130_fd_sc_hd__a221o_1
+       37  324.061   sky130_fd_sc_hd__a221oi_1
+       24  210.202   sky130_fd_sc_hd__a22o_1
+      222 1.67E+03   sky130_fd_sc_hd__a22oi_1
+        1    21.27   sky130_fd_sc_hd__a22oi_4
+        1   11.261   sky130_fd_sc_hd__a2bb2o_2
+        4   35.034   sky130_fd_sc_hd__a2bb2oi_1
+        2   20.019   sky130_fd_sc_hd__a311o_1
+       15  131.376   sky130_fd_sc_hd__a311oi_1
+        8   70.067   sky130_fd_sc_hd__a31o_2
+       53  331.568   sky130_fd_sc_hd__a31oi_1
+        1    10.01   sky130_fd_sc_hd__a32o_1
+        3   26.275   sky130_fd_sc_hd__a32oi_1
+        3   26.275   sky130_fd_sc_hd__a41oi_1
+        2   12.512   sky130_fd_sc_hd__and2_0
+       10    62.56   sky130_fd_sc_hd__and2_1
+       14   87.584   sky130_fd_sc_hd__and3_1
+       34  127.622   sky130_fd_sc_hd__buf_1
+        9   45.043   sky130_fd_sc_hd__buf_2
+        1    7.507   sky130_fd_sc_hd__buf_4
+        3   33.782   sky130_fd_sc_hd__buf_6
+      548 2.06E+03   sky130_fd_sc_hd__clkbuf_1
+        4   15.014   sky130_fd_sc_hd__clkinv_1
+        1    3.754   sky130_fd_sc_hd__conb_1
+     1144 2.29E+04   sky130_fd_sc_hd__dfxtp_1
+        4   80.077   sky130_fd_sc_hd__fa_1
+      100   1251.2   sky130_fd_sc_hd__ha_1
+      104  390.374   sky130_fd_sc_hd__inv_1
+       56  630.605   sky130_fd_sc_hd__mux2_2
+       92  920.883   sky130_fd_sc_hd__mux2i_1
+        1   22.522   sky130_fd_sc_hd__mux2i_4
+       69  1553.99   sky130_fd_sc_hd__mux4_2
+     1461  5484.01   sky130_fd_sc_hd__nand2_1
+       28  175.168   sky130_fd_sc_hd__nand2b_1
+      213 1.07E+03   sky130_fd_sc_hd__nand3_1
+       40  300.288   sky130_fd_sc_hd__nand3b_1
+       70   437.92   sky130_fd_sc_hd__nand4_1
+        2   17.517   sky130_fd_sc_hd__nand4b_1
+      284 1.07E+03   sky130_fd_sc_hd__nor2_1
+       52  325.312   sky130_fd_sc_hd__nor2b_1
+       74  370.355   sky130_fd_sc_hd__nor3_1
+        9   67.565   sky130_fd_sc_hd__nor3b_1
+        1   12.512   sky130_fd_sc_hd__nor3b_2
+       25    156.4   sky130_fd_sc_hd__nor4_1
+        1    8.758   sky130_fd_sc_hd__nor4b_1
+        1   11.261   sky130_fd_sc_hd__o2111a_1
+        8   70.067   sky130_fd_sc_hd__o2111ai_1
+        3   30.029   sky130_fd_sc_hd__o211a_1
+       51  382.867   sky130_fd_sc_hd__o211ai_1
+       30  225.216   sky130_fd_sc_hd__o21a_1
+      397 1.99E+03   sky130_fd_sc_hd__o21ai_0
+        8   40.038   sky130_fd_sc_hd__o21ai_1
+       10   75.072   sky130_fd_sc_hd__o21bai_1
+       27  236.477   sky130_fd_sc_hd__o221ai_1
+       36  315.302   sky130_fd_sc_hd__o22a_1
+       31  193.936   sky130_fd_sc_hd__o22ai_1
+        2   17.517   sky130_fd_sc_hd__o2bb2ai_1
+        1    10.01   sky130_fd_sc_hd__o311a_1
+        6    52.55   sky130_fd_sc_hd__o311ai_0
+        5   43.792   sky130_fd_sc_hd__o31a_1
+       34  255.245   sky130_fd_sc_hd__o31ai_1
+        1   12.512   sky130_fd_sc_hd__o31ai_2
+        2   20.019   sky130_fd_sc_hd__o32a_1
+        4   35.034   sky130_fd_sc_hd__o32ai_1
+        1   11.261   sky130_fd_sc_hd__o41a_1
+        5   43.792   sky130_fd_sc_hd__o41ai_1
+        2   12.512   sky130_fd_sc_hd__or2_0
+        1    6.256   sky130_fd_sc_hd__or2_1
+        8   50.048   sky130_fd_sc_hd__or2_2
+       28  175.168   sky130_fd_sc_hd__or3_1
+        1    8.758   sky130_fd_sc_hd__or3b_1
+        2   17.517   sky130_fd_sc_hd__or3b_2
+        4   30.029   sky130_fd_sc_hd__or4_1
+       47  411.645   sky130_fd_sc_hd__xnor2_1
+       22  192.685   sky130_fd_sc_hd__xor2_1
+
+   Area for cell type \avsdpll is unknown!
+   Area for cell type \avsddac is unknown!
+
+   Chip area for module '\vsdbabysoc': 52874.460800
+     of which used for sequential elements: 22901.964800 (43.31%)
 ```
 
 ![compare](assets/comp_pre_vs_post_synth_sim_2.png)
