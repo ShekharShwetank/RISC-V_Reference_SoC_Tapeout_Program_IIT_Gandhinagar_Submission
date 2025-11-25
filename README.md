@@ -25,8 +25,6 @@
 6. [Conclusion](#conclusion)
 7. [References and Acknowledgments](#references-and-acknowledgments)
 
----
-
 ## Program Overview
 
 This repository documents the complete journey of **VSDBabySoC** design implementation - from RTL specification to post-layout signoff - as part of the **RISC-V Reference SoC Tapeout Program** in collaboration with **IIT Gandhinagar**. The work spans 9 weeks of intensive hands-on learning in digital VLSI design using industry-standard open-source EDA tools.
@@ -92,6 +90,8 @@ VSDBabySoC is a small but complete mixed-signal System-on-Chip demonstrating int
                     └─────────────────────────────────────────┘
 ```
 
+![1](assets/routed_vsdbabysoc.png)
+
 ### Component Descriptions
 
 **1. RISC-V Core (rvmyth)**
@@ -128,6 +128,32 @@ vsdbabysoc (top)
 ---
 
 ## Complete Design Flow
+
+### Inclusion of PLL and DAC Hard Macros in STA
+
+The VSDBabySoC design integrates two critical analog IP blocks as hard macros: the **Phase-Locked Loop (avsdpll)** and the **10-bit Digital-to-Analog Converter (avsddac)**. These macros are included in the static timing analysis (STA) as hard IP blocks but their internal analog circuitry is not synthesized or optimized through the digital synthesis flow.
+
+This ensures accurate timing modeling of the overall SoC while respecting the analog nature of these macros. The integration is managed via the following flow configuration variables in `flow/designs/sky130hd/VSDBabySoC/config.mk`:
+
+- `ADDITIONAL_LIBS` includes the liberty (.lib) timing models for avsdpll and avsddac macros.
+- `ADDITIONAL_LEFS` includes the LEF physical design abstracts for these macros.
+- `ADDITIONAL_GDS` includes the GDS layout files for completion of physical design.
+
+These specifications allow the digital synthesis, placement, routing, and STA tools to incorporate the PLL and DAC as fixed hard macros with defined physical and timing characteristics, without synthesizing their analog internals.
+
+---
+
+### Running the Flow
+
+There are two primary modes of running the design flow with associated scripts:
+
+1. **Full RTL to GDSII Flow:**  
+To execute the complete physical design flow—from RTL synthesis through placement, clock tree synthesis, routing, and final GDSII generation—the following command is used:
+
+```bash
+make DESIGN_CONFIG=./designs/sky130hd/vsdbabysoc/config.mk
+```
+This command triggers all stages of the OpenROAD flow as defined in the configuration file for VSDBabySoC.
 
 ### Tool Installation and Setup
 
@@ -294,6 +320,8 @@ iverilog -o pre_synth_sim.out \
 gtkwave pre_synth_sim.vcd
 ```
 
+![waveform](assets/waveform_pre_synth_sim_2.png)
+
 #### Simulation Results
 
 **Key Observations:**
@@ -327,6 +355,9 @@ write_verilog -noattr reports/vsdbabysoc_netlist.v
 stat
 ```
 
+![synth](assets/vsdbabysoc.yosys_show.png)
+![post_synth_netlist](assets/waveform_post_synth_sim.png)
+
 #### Synthesis Statistics
 
 ```
@@ -342,6 +373,8 @@ Number of cells:               10,349
 
 Chip area for module '\vsdbabysoc': 151667.417600
 ```
+
+![compare](assets/comp_pre_vs_post_synth_sim_2.png)
 
 #### SDC Constraints
 
@@ -396,22 +429,13 @@ Critical Path (Setup):
 
 #### PVT Corner Analysis
 
-16 PVT corners analyzed systematically:
-
-| Corner | Process | Temp | Voltage | WNS (ns) | WHS (ns) | Status |
-|--------|---------|------|---------|----------|----------|--------|
-| tt_025C_1v80 | TT | 25°C | 1.80V | +2.26 | +0.03 | ✓ PASS |
-| tt_100C_1v80 | TT | 100°C | 1.80V | +2.14 | +0.04 | ✓ PASS |
-| ff_n40C_1v95 | FF | -40°C | 1.95V | +5.73 | +0.01 | ✓ PASS |
-| ff_100C_1v95 | FF | 100°C | 1.95V | +4.89 | +0.02 | ✓ PASS |
-| ss_n40C_1v28 | SS | -40°C | 1.28V | -23.45 | +0.12 | ✗ FAIL |
-| ss_100C_1v40 | SS | 100°C | 1.40V | -8.92 | +0.08 | ✗ FAIL |
-
 **Analysis Summary:**
 - ✓ All TT and FF corners meet timing
 - ✗ SS (slow-slow) corners fail setup timing
 - ✓ All corners pass hold timing
 - **Conclusion:** Clock period needs to be increased to ~15-16 ns for full PVT coverage, or aggressive optimization required
+
+![sta_across_pvt](assets/pvt_summary.png)
 
 ---
 
@@ -552,35 +576,11 @@ make
 
 #### Design Configuration
 
-Created `flow/designs/sky130hd/vsdbabysoc/config.mk`:
-
-```makefile
-export DESIGN_NAME = vsdbabysoc
-export PLATFORM    = sky130hd
-
-export VERILOG_FILES = $(DESIGN_HOME)/src/module/vsdbabysoc.v \
-                       $(DESIGN_HOME)/src/module/rvmyth.v \
-                       $(DESIGN_HOME)/src/module/clk_gate.v
-
-export SDC_FILE      = $(DESIGN_HOME)/src/sdc/vsdbabysoc_synthesis.sdc
-
-export ADDITIONAL_LEFS = $(DESIGN_HOME)/lef/avsddac.lef \
-                          $(DESIGN_HOME)/lef/avsdpll.lef
-
-export ADDITIONAL_LIBS = $(DESIGN_HOME)/lib/avsddac.lib \
-                          $(DESIGN_HOME)/lib/avsdpll.lib
-
-export ADDITIONAL_GDS  = $(DESIGN_HOME)/gds/avsddac.gds \
-                          $(DESIGN_HOME)/gds/avsdpll.gds
-
-export DIE_AREA    = 0 0 1500 1500
-export CORE_AREA   = 10 10 1490 1490
-
-export PLACE_DENSITY = 0.60
-export CLOCK_PERIOD = 11.0
-```
+Created [flow/designs/sky130hd/vsdbabysoc/config.mk](flow/designs/sky130hd/vsdbabysoc/config.mk)
 
 #### Floorplan Execution
+
+[Floorplan Final](flow/reports/sky130hd/VSDBabySoC/base/2_floorplan_final.rpt)
 
 ```bash
 cd flow
@@ -596,6 +596,9 @@ make DESIGN_CONFIG=./designs/sky130hd/vsdbabysoc/config.mk floorplan
 - Power straps: met4/met5, 10µm pitch
 
 #### Placement Execution
+
+[Detailed Place](flow/reports/sky130hd/VSDBabySoC/base/3_detailed_place.rpt)
+[Global Place](flow/reports/sky130hd/VSDBabySoC/base/3_global_place.rpt)
 
 ```bash
 make DESIGN_CONFIG=./designs/sky130hd/vsdbabysoc/config.mk place
@@ -740,15 +743,7 @@ report_checks -path_delay max
 ```bash
 run_routing
 ```
-
-**Routing Statistics:**
-- Global routing violations: 0
-- Detailed routing DRC violations: 3 (fixed manually)
-- Total wire length: 458,234 µm
-- Via count: 87,542
-- Routing time: 2 hours 15 minutes
-
----
+![detailed_route](assets/routed_vsdbabysoc.png)
 
 ### Complete Physical Design (RTL to GDSII)
 
@@ -885,6 +880,8 @@ make DESIGN_CONFIG=./designs/sky130hd/vsdbabysoc/config.mk route
 
 ✓ Routing completed with **zero violations**!
 
+![routing_fix](assets/congestion_resolved_fully.png)
+
 #### Final Design Metrics
 
 **Area:**
@@ -927,6 +924,8 @@ make DESIGN_CONFIG=./designs/sky130hd/vsdbabysoc/config.mk finish
 
 **Output:** `results/sky130hd/vsdbabysoc/base/6_final.gds`
 
+![final_layout](assets/complete_orfs_vsdbabysoc.png)
+
 ---
 
 ### Multi-Corner, Multi-Stage STA Analysis
@@ -937,101 +936,41 @@ make DESIGN_CONFIG=./designs/sky130hd/vsdbabysoc/config.mk finish
 
 Created automated framework for running STA across all corners:
 
-**Script:** `run_multi_corner_sta.sh`
-
-```bash
-#!/bin/bash
-
-OPENROAD_BIN=~/OpenROAD-flow-scripts/tools/OpenROAD/build/bin/openroad
-ROOT="$PWD"
-DES="$ROOT/results/sky130hd/VSDBabySoC/base"
-OUTDIR="$ROOT/reports/sta_across_pvt"
-LOGDIR="$ROOT/logs/sta_corners"
-
-mkdir -p "$OUTDIR" "$LOGDIR"
-
-# Define all 16 PVT corners
-declare -A CORNERS=(
-  ["tt_025C_1v80"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib"
-  ["tt_100C_1v80"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__tt_100C_1v80.lib"
-  ["ff_100C_1v65"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ff_100C_1v65.lib"
-  ["ff_100C_1v95"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ff_100C_1v95.lib"
-  ["ff_n40C_1v56"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ff_n40C_1v56.lib"
-  ["ff_n40C_1v65"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ff_n40C_1v65.lib"
-  ["ff_n40C_1v76"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ff_n40C_1v76.lib"
-  ["ff_n40C_1v95"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ff_n40C_1v95.lib"
-  ["ss_100C_1v40"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ss_100C_1v40.lib"
-  ["ss_100C_1v60"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ss_100C_1v60.lib"
-  ["ss_n40C_1v28"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ss_n40C_1v28.lib"
-  ["ss_n40C_1v35"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ss_n40C_1v35.lib"
-  ["ss_n40C_1v40"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ss_n40C_1v40.lib"
-  ["ss_n40C_1v44"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ss_n40C_1v44.lib"
-  ["ss_n40C_1v60"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ss_n40C_1v60.lib"
-  ["ss_n40C_1v76"]="$ROOT/platforms/sky130hd/lib/sky130_fd_sc_hd__ss_n40C_1v76.lib"
-)
-
-STAGES=("postsynth" "postplace" "postcts" "postroute")
-
-# Run STA for each corner and stage
-for stage in "${STAGES[@]}"; do
-  for corner in "${!CORNERS[@]}"; do
-    echo "Running STA: ${stage} - ${corner}"
-    # [STA execution commands...]
-  done
-done
-```
+**Script:** [flow/run_multi_corner_sta.sh](flow/run_multi_corner_sta.sh)
 
 #### Analysis Execution
 
-```bash
-cd WEEK_8/flow
-./run_multi_corner_sta.sh
-python3 extract_timing_metrics.py reports/sta_across_pvt
-python3 plot_timing_graphs.py reports/sta_across_pvt/timing_metrics_all.json reports/sta_across_pvt/graphs
-```
+* [extract_timing_metrics.py](flow/extract_timing_metrics.py) parses OpenSTA reports and consolidates WNS, TNS, WHS, THS metrics into CSV/JSON.
 
-**Total analyses:** 16 corners × 4 stages = **64 individual STA runs**
+* [plot_timing_graphs.py](flow/plot_timing_graphs.py) generates visualizations.
 
-#### Consolidated Results
-
-**Setup Timing Summary (Post-Route):**
-
-| Corner Type | Corners | Violations | WNS Range | Status |
-|-------------|---------|------------|-----------|--------|
-| **TT** (Typical) | 2 | 0 | +5.61 to +5.81 ns | PASS |
-| **FF** (Fast) | 6 | 0 | +5.27 to +7.76 ns | PASS |
-| **SS** (Slow) | 8 | 6 | -4.90 to +3.53 ns | FAIL |
-
-**Hold Timing Summary (Post-Route):**
-
-| Stage | Min WHS | Max WHS | Violations |
-|-------|---------|---------|------------|
-| Post-Synthesis | +1.12 ns | +9.91 ns | **0** |
-| Post-Placement | +1.09 ns | +9.57 ns | **0** |
-| Post-CTS | +1.08 ns | +9.50 ns | **0** |
-| Post-Route | +1.02 ns | +9.00 ns | **0** |
-
-**Critical Failing Corners (Post-Route Setup):**
-
-| Corner | Process | Temp | Voltage | WNS | TNS |
-|--------|---------|------|---------|-----|-----|
-| ss_100C_1v40 | Slow | 100°C | 1.40V | -4.90 ns | -6.34 ns |
-| ss_n40C_1v28 | Slow | -40°C | 1.28V | -3.65 ns | -1.56 ns |
-| ss_n40C_1v60 | Slow | -40°C | 1.60V | -2.24 ns | -9.89 ns |
-| ss_n40C_1v35 | Slow | -40°C | 1.35V | -2.10 ns | -7.57 ns |
-| ss_n40C_1v40 | Slow | -40°C | 1.40V | -1.45 ns | -4.18 ns |
-| ss_n40C_1v44 | Slow | -40°C | 1.44V | -1.07 ns | -2.40 ns |
+* [generate_heatmap_table.py](flow/generate_heatmap_table.py) creates heatmap data for slack visualization.
 
 #### Visualization
 
-**Setup Slack Heatmap Across Corners and Stages:**
+![1](flow/reports/sta_across_pvt/graphs/heatmap_table_postsynth.png)
+![2](flow/reports/sta_across_pvt/graphs/heatmap_table_postplace.png)
+![3](flow/reports/sta_across_pvt/graphs/heatmap_table_postcts.png)
+![4](flow/reports/sta_across_pvt/graphs/heatmap_table_postroute.png)
 
+![5](flow/reports/sta_across_pvt/graphs/wns_comparison.png)
+![6](flow/reports/sta_across_pvt/graphs/tns_comparison.png)
+![7](flow/reports/sta_across_pvt/graphs/setup_slack_comparison.png)
+![8](flow/reports/sta_across_pvt/graphs/whs_comparison.png)
 
-**WNS Comparison Across Design Stages:**
+![10](flow/reports/sta_across_pvt/graphs/violations_by_corner_type.png)
+![11](flow/reports/sta_across_pvt/graphs/setup_slack_heatmap.png)
+![12](flow/reports/sta_across_pvt/graphs/hold_slack_heatmap.png)
+![13](flow/reports/sta_across_pvt/graphs/tns_heatmap.png)
 
+* Verification:
 
-**Violations by Corner Type:**
-
+![verification](assets/extracted_timing_across_all_corners.png)
+![PostSynth](assets/PS.png)
+![PostPlace](assets/PP.png)
+![PostCTS](assets/PCTS.png)
+![PostRoute](assets/PR.png)
+![PVT_SUM_VERIFY](assets/PVT_SUM_VERIFY.png)
 
 #### Analysis and Recommendations
 
@@ -1047,7 +986,7 @@ python3 plot_timing_graphs.py reports/sta_across_pvt/timing_metrics_all.json rep
 - **Cold temperature (-40°C):** Reduces carrier mobility in slow process
 - **Wire parasitics:** Post-route parasitics add ~1.5-2 ns to critical paths
 
-**Recommended Solutions:**
+**Solutions:**
 
 **Option 1: Clock Period Adjustment (Simplest)**
 - Increase clock period from 11 ns to 13-14 ns
@@ -1056,6 +995,7 @@ python3 plot_timing_graphs.py reports/sta_across_pvt/timing_metrics_all.json rep
 - Trade-off: Lower performance
 
 **Option 2: Aggressive Optimization**
+
 ```tcl
 # In synthesis
 synth -top vsdbabysoc -flatten
@@ -1341,7 +1281,8 @@ digraph critical_path {
 | **Output delay** | 3.3 ns | Specified |
 
 **Critical Path (Setup, TT Corner):**
-```
+
+```bash
 Startpoint: core/CPU_Xreg_value_a4[10][30]$_SDFFE_PP0P_
 Endpoint:   core/CPU_Xreg_value_a4[8][31]$_SDFFE_PP0P_
 Path Group: core_clk
@@ -1365,56 +1306,6 @@ Slack (MET):            +0.82 ns
 
 - **10/16 corners** meet setup timing
 - **16/16 corners** meet hold timing
-
-### Power Analysis
-
-**Post-Route Power (TT Corner, 91 MHz):**
-
-| Component | Power (mW) | Percentage |
-|-----------|------------|------------|
-| **Internal Power** | 2.18 | 54.2% |
-| **Switching Power** | 1.82 | 45.3% |
-| **Leakage Power** | 0.024 | 0.6% |
-| **Total Dynamic** | 4.00 | 99.4% |
-| **Total Power** | **4.03** | **100%** |
-
-**Power Efficiency:**
-- 44.3 µW/MHz
-- Estimated battery life (CR2032, 220 mAh): ~180 hours @ 91 MHz
-
-**Power Distribution:**
-- RISC-V core: 2.87 mW (71.2%)
-- PLL: 0.82 mW (20.3%)
-- DAC: 0.28 mW (7.0%)
-- Other: 0.06 mW (1.5%)
-
-### DRC and LVS Verification
-
-**DRC (Design Rule Check):**
-```bash
-magic -dnull -noconsole -rcfile sky130A.magicrc << EOF
-  gds read 6_final.gds
-  load vsdbabysoc
-  select top cell
-  drc check
-  drc count
-  quit -noprompt
-EOF
-```
-
-**Result:** **0 DRC violations**
-
-**LVS (Layout vs Schematic):**
-```bash
-netgen -batch lvs \
-  "6_final.spice vsdbabysoc" \
-  "vsdbabysoc_netlist.v vsdbabysoc" \
-  sky130A_setup.tcl vsdbabysoc_lvs.out
-```
-
-**Result:** ✅ **PASS - Circuits match uniquely**
-
----
 
 ## Conclusion
 
@@ -1507,6 +1398,29 @@ Sincere gratitude to:
 - **The OpenROAD Project** for providing world-class open-source EDA tools
 - **Google and SkyWater** for open-sourcing the SKY130 PDK
 - **The open-source community** for tools: Yosys, Magic, ngspice, Icarus Verilog, GTKWave
+
+---
+
+## Assets and Visualizations
+
+- Additional visual data:  
+  See full list in [assets/](assets/) directory for screenshots, timing reports, and Chip GDS views.
+
+---
+
+## Flow Directory Scripts and Automation
+
+The `flow/` directory contains key scripts and automation tools for timing analysis, STA report extraction, visualization, and multi-corner STA runs:
+
+- `run_multi_corner_sta.sh` — Bash script to run STA analysis on multiple PVT corners and stages.  
+- `extract_timing_metrics.py` — Python script to parse STA reports and extract timing metrics (WNS, TNS, WHS, THS) into CSV and JSON.  
+- `generate_heatmap_table.py` — Python script that generates heatmap tables (PNG) for timing slack visualization using matplotlib.  
+- `plot_timing_graphs.py` — Python script to generate timing comparison graphs and heatmaps across corners and stages.  
+- `debug_pdn.tcl` — TCL script for detailed power distribution network timing and netlist instance checks.
+
+These scripts automate the static timing analysis workflow and enhance post-processing visualization for improved design insight.
+
+---
 
 ## References and Acknowledgments
 
