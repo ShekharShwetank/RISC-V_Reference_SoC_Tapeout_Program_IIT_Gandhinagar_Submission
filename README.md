@@ -1215,7 +1215,7 @@ make
 
 #### Design Configuration
 
-Created [flow/designs/sky130hd/vsdbabysoc/config.mk](flow/designs/sky130hd/vsdbabysoc/config.mk)
+Created [flow/designs/sky130hd/VSDBabySoC/config.mk](flow/designs/sky130hd/VSDBabySoC/config.mk)
 
 #### Floorplan Execution
 
