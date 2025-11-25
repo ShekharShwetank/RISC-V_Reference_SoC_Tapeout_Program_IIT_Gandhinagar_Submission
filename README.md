@@ -3,6 +3,10 @@
 **Author:** Shwetank Shekhar  
 **Program:** RISC-V Reference SoC Tapeout Program, IIT Gandhinagar & VSD(VLSI System Design)  
 **GitHub:** [ShekharShwetank](https://github.com/ShekharShwetank)  
+**Verification:** [/flow/](/flow/) & [/assets/](/assets/)  
+**Main Repository:** [https://github.com/ShekharShwetank/RISC-V_RTL2GDSII.git](https://github.com/ShekharShwetank/RISC-V_RTL2GDSII.git)  
+
+ - NOTE: All terminal screenshots display username `ank@shwetank-shekhar` or `shwetank@shwetank-VirtualBox` for verification purposes.
 
 ---
 
