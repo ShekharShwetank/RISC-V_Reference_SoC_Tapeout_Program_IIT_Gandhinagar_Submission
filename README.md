@@ -1,7 +1,7 @@
-# RISC-V Reference SoC Tapeout Program
+# RISC-V Reference SoC Design and Tapeout Program - Phase 1 Repository
 
 **Author:** Shwetank Shekhar  
-**Program:** RISC-V Reference SoC Tapeout Program, IIT Gandhinagar & VSD(VLSI System Design)  
+**Program:** RISC-V Reference SoC Design and Tapeout Program, IIT Gandhinagar & VSD(VLSI System Design)  
 **GitHub:** [ShekharShwetank](https://github.com/ShekharShwetank)  
 **Verification:** [/flow/](/flow/) & [/assets/](/assets/)  
 **Main Repository:** [https://github.com/ShekharShwetank/RISC-V_RTL2GDSII.git](https://github.com/ShekharShwetank/RISC-V_RTL2GDSII.git)  
@@ -88,6 +88,9 @@
 
 ## Directory Structure
 
+<details>
+<summary>Click to expand Directory Structure</summary>
+ 
 ```bash
 ank@shwetank-shekhar:~/Desktop/SoC_Shwetank/Documents/IIT$ tree
 .
@@ -562,6 +565,7 @@ ank@shwetank-shekhar:~/Desktop/SoC_Shwetank/Documents/IIT$ tree
 33 directories, 540 files
 ank@shwetank-shekhar:~/Desktop/SoC_Shwetank/Documents/IIT$ 
 ```
+</details>
 
 ## Program Overview
 
@@ -2068,7 +2072,7 @@ These scripts automate the static timing analysis workflow and enhance post-proc
 
 **Last Updated:** November 25, 2025  
 **Author:** Shwetank Shekhar  
-**Contact:** shwetankshekharcode@gmail.com 
+**Contact:** shwetankshekharcode@gmail.com | +91 7200250179  
 **GitHub:** https://github.com/ShekharShwetank
 
 ---
